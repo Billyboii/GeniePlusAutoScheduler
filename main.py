@@ -1,8 +1,14 @@
-from autoscheduler import get_session, get_theme_park
+from autoscheduler.auth import get_session, get_theme_park
 import json
 import mousetools
-import colorama
 import os
+
+class textcolors:
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
 
 def clear_screen():
     if os.name == 'nt':
@@ -15,7 +21,7 @@ def display_rides(rides, selections, sorted_order):
         ride_details = rides[ride_id]
         selected = '[x]' if ride_id in selections else '[ ]'
         if selected == '[x]':
-            print(colorama.Fore.GREEN + f"{selected} {idx + 1}: {ride_details['name']}" + colorama.Fore.RESET)
+            print(textcolors.GREEN + f"{selected} {idx + 1}: {ride_details['name']}" + textcolors.ENDC)
         else:
             print(f"{selected} {idx + 1}: {ride_details['name']}")
 
@@ -27,7 +33,7 @@ def toggle_selection(ride_number, sorted_order, selections):
         else:
             selections[ride_id] = True
     else:
-        print("Invalid selection. Please enter a number within the range of available rides.")
+        print(textcolors.FAIL + "Invalid selection. Please enter a number within the range of available rides." + textcolors.ENDC)
 
 def toggle_all_selections(sorted_order, selections):
     if len(selections) == len(sorted_order):
@@ -37,7 +43,7 @@ def toggle_all_selections(sorted_order, selections):
             selections[ride_id] = True  # Select all rides
 
 # assign priroty to rides based on user input
-def assign_priority(selections):
+def assign_priority(selections, rides):
     priority = {}
     for ride_id in selections:
         priority[ride_id] = input(f"Enter priority for {rides[ride_id]['name']}: ")
@@ -70,7 +76,7 @@ def mousetools_park():
             toggle_all_selections(sorted_order, selections)
 
     # Assign priority to selected rides
-    priority = assign_priority(selections)
+    priority = assign_priority(selections, rides)
 
     # Sort rides based on priority
     sorted_order = [ride_id for ride_id, _ in sorted(priority.items(), key=lambda x: x[1])]
@@ -86,12 +92,12 @@ def mousetools_park():
             status = attraction.get_status()
             fastpass_available = attraction.fastpass_available()
 
-            print(colorama.Fore.BLUE + name + colorama.Fore.RESET +
-                f" | Status: {colorama.Fore.GREEN + status + colorama.Fore.RESET if status != 'Closed' else colorama.Fore.RED + 'Closed' + colorama.Fore.RESET}" +
+            print(textcolors.BLUE + name + textcolors.ENDC +
+                f" | Status: {textcolors.GREEN + status + textcolors.ENDC if status != 'Closed' else textcolors.FAIL + 'Closed' + textcolors.ENDC}" +
                 f" | Wait time: {wait_time if wait_time is not None else 'N/A'}" +
-                f" | FastPass Available: {colorama.Fore.GREEN + 'Yes' if fastpass_available else colorama.Fore.RED + 'No' + colorama.Fore.RESET}")
+                f" | FastPass Available: {textcolors.GREEN + 'Yes' if fastpass_available else textcolors.FAIL + 'No' + textcolors.ENDC}")
         except:
-            print(f"Error fetching details for {ride_details['name']}")
+            print(textcolors.FAIL + f"Error fetching details for {ride_details['name']}" + textcolors.ENDC)
 
 if __name__ == "__main__":
     session = get_session()
