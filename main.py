@@ -34,6 +34,12 @@ def toggle_all_selections(sorted_order, selections):
         for ride_id in sorted_order:
             selections[ride_id] = True  # Select all rides
 
+# assign priroty to rides based on user input
+def assign_priority(selections):
+    priority = {}
+    for ride_id in selections:
+        priority[ride_id] = input(f"Enter priority for {rides[ride_id]['name']}: ")
+    return priority
 
 # Initialize the park object (example: Magic Kingdom)
 mk = mousetools.Park(80007944)
@@ -59,16 +65,26 @@ while user_input != 'n':
     elif user_input == 'a':
         toggle_all_selections(sorted_order, selections)
 
-# Output selected rides and their details
-for ride_id in selections:
-    ride_details = rides[ride_id]
-    attraction = mousetools.Attraction(ride_id)
-    name = ride_details['name']
-    wait_time = attraction.get_wait_time()
-    status = attraction.get_status()
-    fastpass_available = attraction.fastpass_available()
+# Assign priority to selected rides
+priority = assign_priority(selections)
 
-    print(colorama.Fore.BLUE + name + colorama.Fore.RESET +
-          f" | Status: {colorama.Fore.GREEN + status + colorama.Fore.RESET if status != 'Closed' else colorama.Fore.RED + 'Closed' + colorama.Fore.RESET}" +
-          f" | Wait time: {wait_time if wait_time is not None else 'N/A'}" +
-          f" | FastPass Available: {colorama.Fore.GREEN + 'Yes' if fastpass_available else colorama.Fore.RED + 'No' + colorama.Fore.RESET}")
+# Sort rides based on priority
+sorted_order = [ride_id for ride_id, _ in sorted(priority.items(), key=lambda x: x[1])]
+clear_screen()
+
+# Output selected rides and their details
+for ride_id in sorted_order:
+    try:
+        ride_details = rides[ride_id]
+        attraction = mousetools.Attraction(ride_id)
+        name = ride_details['name']
+        wait_time = attraction.get_wait_time()
+        status = attraction.get_status()
+        fastpass_available = attraction.fastpass_available()
+
+        print(colorama.Fore.BLUE + name + colorama.Fore.RESET +
+            f" | Status: {colorama.Fore.GREEN + status + colorama.Fore.RESET if status != 'Closed' else colorama.Fore.RED + 'Closed' + colorama.Fore.RESET}" +
+            f" | Wait time: {wait_time if wait_time is not None else 'N/A'}" +
+            f" | FastPass Available: {colorama.Fore.GREEN + 'Yes' if fastpass_available else colorama.Fore.RED + 'No' + colorama.Fore.RESET}")
+    except:
+        print(f"Error fetching details for {ride_details['name']}")
