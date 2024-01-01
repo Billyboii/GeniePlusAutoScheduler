@@ -1,3 +1,5 @@
+from autoscheduler import get_session, get_theme_park
+import json
 import mousetools
 import colorama
 import os
@@ -34,41 +36,46 @@ def toggle_all_selections(sorted_order, selections):
         for ride_id in sorted_order:
             selections[ride_id] = True  # Select all rides
 
+def mousetools_park():
 
-# Initialize the park object (example: Magic Kingdom)
-mk = mousetools.Park(80007944)
+    # Initialize the park object (example: Magic Kingdom)
+    mk = mousetools.Park(80007944)
 
-# Fetch detailed wait times
-rides = mk.get_wait_times_detailed()
+    # Fetch detailed wait times
+    rides = mk.get_wait_times_detailed()
 
-selections = {}
-user_input = None
+    selections = {}
+    user_input = None
 
-# Sort rides and create a sorted order list
-sorted_order = [ride_id for ride_id, _ in sorted(rides.items(), key=lambda x: x[1]['name'])]
+    # Sort rides and create a sorted order list
+    sorted_order = [ride_id for ride_id, _ in sorted(rides.items(), key=lambda x: x[1]['name'])]
 
-# Main loop
-while user_input != 'n':
-    clear_screen()
-    display_rides(rides, selections, sorted_order)
-    user_input = input("Enter a ride number to toggle selection, 'a' to toggle all, 'n' to proceed: ")
+    # Main loop
+    while user_input != 'n':
+        clear_screen()
+        display_rides(rides, selections, sorted_order)
+        user_input = input("Enter a ride number to toggle selection, 'a' to toggle all, 'n' to proceed: ")
 
-    if user_input.isdigit():
-        ride_number = int(user_input)
-        toggle_selection(ride_number, sorted_order, selections)
-    elif user_input == 'a':
-        toggle_all_selections(sorted_order, selections)
+        if user_input.isdigit():
+            ride_number = int(user_input)
+            toggle_selection(ride_number, sorted_order, selections)
+        elif user_input == 'a':
+            toggle_all_selections(sorted_order, selections)
 
-# Output selected rides and their details
-for ride_id in selections:
-    ride_details = rides[ride_id]
-    attraction = mousetools.Attraction(ride_id)
-    name = ride_details['name']
-    wait_time = attraction.get_wait_time()
-    status = attraction.get_status()
-    fastpass_available = attraction.fastpass_available()
+    # Output selected rides and their details
+    for ride_id in selections:
+        ride_details = rides[ride_id]
+        attraction = mousetools.Attraction(ride_id)
+        name = ride_details['name']
+        wait_time = attraction.get_wait_time()
+        status = attraction.get_status()
+        fastpass_available = attraction.fastpass_available()
 
-    print(colorama.Fore.BLUE + name + colorama.Fore.RESET +
-          f" | Status: {colorama.Fore.GREEN + status + colorama.Fore.RESET if status != 'Closed' else colorama.Fore.RED + 'Closed' + colorama.Fore.RESET}" +
-          f" | Wait time: {wait_time if wait_time is not None else 'N/A'}" +
-          f" | FastPass Available: {colorama.Fore.GREEN + 'Yes' if fastpass_available else colorama.Fore.RED + 'No' + colorama.Fore.RESET}")
+        print(colorama.Fore.BLUE + name + colorama.Fore.RESET +
+              f" | Status: {colorama.Fore.GREEN + status + colorama.Fore.RESET if status != 'Closed' else colorama.Fore.RED + 'Closed' + colorama.Fore.RESET}" +
+              f" | Wait time: {wait_time if wait_time is not None else 'N/A'}" +
+              f" | FastPass Available: {colorama.Fore.GREEN + 'Yes' if fastpass_available else colorama.Fore.RED + 'No' + colorama.Fore.RESET}")
+
+if __name__ == "__main__":
+    session = get_session()
+    print(json.dumps(get_theme_park(session, 80007944), indent=1))
