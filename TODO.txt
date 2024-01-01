@@ -1,0 +1,5 @@
+To Do:
+
+- Arrange priority queue code
+- Factor in location based distance
+- Get Genie+ line data
