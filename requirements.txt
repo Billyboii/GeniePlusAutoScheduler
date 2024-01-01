@@ -1,3 +1,0 @@
-mousetools
-colorama
-windows-curses
