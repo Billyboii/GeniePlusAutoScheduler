@@ -1,4 +1,5 @@
-from autoscheduler.auth import get_session, get_theme_park
+from autoscheduler.auth import get_session
+from autoscheduler.parks import get_theme_park
 import json
 import mousetools
 import os
