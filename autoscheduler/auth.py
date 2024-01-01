@@ -40,23 +40,3 @@ def get_session() -> sessions.Session:
         Creates a session for calling Disney
     """
     return set_auth_token(sessions.Session())
-
-
-def get_water_park(session: sessions.Session, identifier: int) -> Dict:
-    """
-        Fetches water park json from disney, given a session and identifier
-    """
-    water_park = session.get(
-        "https://api.wdpro.disney.go.com/global-pool-override-B"
-        f"/facility-service/water-parks/{identifier}").json()
-    return water_park
-
-
-def get_theme_park(session: sessions.Session, identifier: int) -> Dict:
-    """
-        Fetches a them park json from disney given a session and identifier
-    """
-    theme_park = session.get(
-        "https://api.wdpro.disney.go.com/global-pool-override-B"
-        f"/facility-service/theme-parks/{identifier}").json()
-    return theme_park
