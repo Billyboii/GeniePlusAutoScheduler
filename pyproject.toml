@@ -6,4 +6,5 @@ dependencies = [
     'colorama',
     'requests',
     'windows-curses ; platform_system == "Windows"',
+    'pylint',
 ]
