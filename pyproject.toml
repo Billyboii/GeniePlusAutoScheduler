@@ -3,7 +3,6 @@ name = "GeniePlusAutoScheduler"
 version = "0.0.1"
 dependencies = [
     'mousetools',
-    'colorama',
     'requests',
     'windows-curses ; platform_system == "Windows"',
     'pylint',
